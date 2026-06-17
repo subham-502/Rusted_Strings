@@ -1,0 +1,27 @@
+/* 1. Reset everything to ensure no gaps */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 2. Make the body and html take up full space */
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background: var(--bg);
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px; 
+}
+
+/* 3. Update #root to be fluid and full-width */
+#root {
+  width: 100%;      /* Changed from 1126px to 100% */
+  margin: 0;        /* Removed 'auto' margin */
+  border-inline: none; /* Removed the side borders */
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ... keep the rest of your typography styles (h1, h2, etc.) below this ... */
