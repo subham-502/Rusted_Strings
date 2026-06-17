@@ -1,6 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function EPK() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Viewport checking listener system
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const stats = [
     { label: 'Sounds Like', value: 'Nine Inch Nails, Muse, Queens of the Stone Age' },
     { label: 'Origin', value: 'Austin, TX' },
@@ -13,12 +26,45 @@ export default function EPK() {
     { quote: "Rusted Strings seamlessly blends heavy alternative grit with massive electronic hooks.", source: "The Underground Pulse" }
   ];
 
+  // Dynamic layout definitions calculated natively based on device profile
+  const responsiveSection = {
+    ...styles.section,
+    padding: isMobile ? '50px 5%' : '60px 8%'
+  };
+
+  const responsiveHeading = {
+    ...styles.heading,
+    fontSize: isMobile ? '2.2rem' : '2.5rem',
+    marginBottom: isMobile ? '20px' : '30px'
+  };
+
+  const responsiveDownloadBar = {
+    ...styles.downloadBar,
+    flexDirection: isMobile ? 'column' : 'row',
+    alignItems: isMobile ? 'flex-start' : 'center',
+    gap: isMobile ? '12px' : '15px',
+    marginBottom: isMobile ? '35px' : '50px',
+  };
+
+  const responsiveGrid = {
+    ...styles.grid,
+    gridTemplateColumns: isMobile ? '1fr' : '1fr 1.2fr',
+    gap: isMobile ? '40px' : '60px'
+  };
+
+  const responsiveStatRow = {
+    ...styles.statRow,
+    flexDirection: isMobile ? 'column' : 'row',
+    alignItems: isMobile ? 'flex-start' : 'center',
+    gap: isMobile ? '4px' : '0'
+  };
+
   return (
-    <section id="epk" style={styles.section}>
-      <h2 style={styles.heading}>ELECTRONIC PRESS KIT</h2>
+    <section id="epk" style={responsiveSection}>
+      <h2 style={responsiveHeading}>ELECTRONIC PRESS KIT</h2>
       
-      {/* 1. Quick Download Dashboard for Promoters/Press */}
-      <div style={styles.downloadBar}>
+      {/* Quick Download Dashboard - Adapts dynamically from single block to rows */}
+      <div style={responsiveDownloadBar}>
         <span style={styles.barLabel}>⚡ INDUSTRY ASSETS:</span>
         <div style={styles.linksGroup}>
           <a href="#" style={styles.downloadLink}>⬇ Promo Photos (Hi-Res)</a>
@@ -27,20 +73,20 @@ export default function EPK() {
         </div>
       </div>
 
-      <div style={styles.grid}>
+      <div style={responsiveGrid}>
         {/* Left Column: Quick Facts & Press Quotes */}
         <div style={styles.leftCol}>
           <h3 style={styles.subHeading}>QUICK FACTS</h3>
           <div style={styles.statsCard}>
             {stats.map((stat, i) => (
-              <div key={i} style={styles.statRow}>
+              <div key={i} style={responsiveStatRow}>
                 <span style={styles.statLabel}>{stat.label}:</span>
-                <span style={styles.statValue}>{stat.value}</span>
+                <span style={{...styles.statValue, maxWidth: isMobile ? '100%' : '70%', textAlign: isMobile ? 'left' : 'right'}}>{stat.value}</span>
               </div>
             ))}
           </div>
 
-          <h3 style={{...styles.subHeading, marginTop: '40px'}}>RECENT PRESS</h3>
+          <h3 style={{...styles.subHeading, marginTop: isMobile ? '30px' : '40px'}}>RECENT PRESS</h3>
           {pressQuotes.map((p, i) => (
             <blockquote key={i} style={styles.blockquote}>
               <p>"{p.quote}"</p>
@@ -52,14 +98,14 @@ export default function EPK() {
         {/* Right Column: Live Video Embed Placeholder & Requirements */}
         <div style={styles.rightCol}>
           <h3 style={styles.subHeading}>FEATURED LIVE PERFORMANCE</h3>
-          <div style={styles.videoPlaceholder}>
+          <div style={{...styles.videoPlaceholder, height: isMobile ? '180px' : '240px'}}>
             <div style={{fontSize: '2rem'}}>🎬</div>
-            <p style={{marginTop: '10px', color: '#888', fontSize: '0.9rem'}}>
+            <p style={{marginTop: '10px', color: '#888', fontSize: '0.85rem'}}>
               [ YouTube / Vimeo Live Session Embed ]
             </p>
           </div>
 
-          <h3 style={{...styles.subHeading, marginTop: '40px'}}>STAGE & AUDIO REQUIREMENTS</h3>
+          <h3 style={{...styles.subHeading, marginTop: isMobile ? '30px' : '40px'}}>STAGE & AUDIO REQUIREMENTS</h3>
           <ul style={styles.bulletList}>
             <li>Total inputs required: 12 (4 vocal mics, 2 guitar DIs, 1 bass DI, 5 drum mics).</li>
             <li>Monitors: 4 independent stage monitor mixes required (In-ear compatible).</li>
@@ -73,18 +119,17 @@ export default function EPK() {
 
 const styles = {
   section: {
-    padding: '60px 8%',
     backgroundColor: '#0a0a0a',
     color: '#ffffff',
     fontFamily: 'sans-serif',
-    borderTop: '1px solid #111'
+    borderTop: '1px solid #111',
+    transition: 'padding 0.2s ease'
   },
   heading: {
     fontFamily: '"Impact", sans-serif',
-    fontSize: '2.5rem',
     letterSpacing: '1px',
-    marginBottom: '30px',
     textTransform: 'uppercase',
+    transition: 'font-size 0.2s ease'
   },
   downloadBar: {
     backgroundColor: '#161616',
@@ -92,11 +137,9 @@ const styles = {
     borderRadius: '4px',
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center',
     flexWrap: 'wrap',
-    gap: '15px',
-    marginBottom: '50px',
-    border: '1px solid #222'
+    border: '1px solid #222',
+    transition: 'all 0.2s ease'
   },
   barLabel: {
     fontWeight: 'bold',
@@ -107,7 +150,8 @@ const styles = {
   linksGroup: {
     display: 'flex',
     gap: '20px',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    flexDirection: 'row'
   },
   downloadLink: {
     color: '#fff',
@@ -119,8 +163,7 @@ const styles = {
   },
   grid: {
     display: 'grid',
-    gridTemplateColumns: '1fr 1.2fr',
-    gap: '60px'
+    transition: 'gap 0.2s ease'
   },
   leftCol: {},
   rightCol: {},
@@ -152,8 +195,6 @@ const styles = {
   },
   statValue: {
     color: '#fff',
-    textAlign: 'right',
-    maxWidth: '70%'
   },
   blockquote: {
     margin: '0 0 20px 0',
@@ -175,14 +216,14 @@ const styles = {
   },
   videoPlaceholder: {
     width: '100%',
-    height: '240px',
     backgroundColor: '#111',
     border: '2px dashed #222',
     borderRadius: '4px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    transition: 'height 0.2s ease'
   },
   bulletList: {
     color: '#aaa',
