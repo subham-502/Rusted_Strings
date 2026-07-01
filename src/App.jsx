@@ -1,55 +1,95 @@
 import React from 'react';
 import Header from './components/Header';
-import SocialSidebar from './components/SocialSidebar'; // 💡 Imported the floating social panel
+import SocialSidebar from './components/SocialSidebar'; 
 import Hero from './components/Hero';
 import Bio from './components/Bio';
 import Gallery from './components/Gallery';
 import EPK from './components/EPK'; 
 import Contact from './components/Contact';
+import Footer from './components/Footer';
 
 export default function App() {
   return (
     <div style={styles.appContainer}>
+      {/* 1. Global Aesthetic Injector (Scrollbars & Micro-Hover States) */}
+      <style>{`
+        /* Smooth Custom Editorial Scrollbar Track */
+        ::-webkit-scrollbar {
+          width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+          background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+          background: #222222;
+          border-radius: 4px;
+          transition: background 0.2s ease;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: #ff3366; /* Interactive signature accent pulse */
+        }
+
+        /* Pagination Dot Interactions */
+        .nav-dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background-color: rgba(255, 255, 255, 0.25);
+          transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+          text-decoration: none;
+        }
+        .nav-dot:hover {
+          background-color: #ff3366;
+          transform: scale(1.6);
+          box-shadow: 0 0 10px rgba(255, 51, 102, 0.6);
+        }
+      `}</style>
+
       {/* Pinned Navigation Bar */}
       <Header />
 
       {/* Floating Booking Channels Panel */}
       <SocialSidebar />
 
+      {/* 2. Fixed Pagination Sidebar */}
+      <div style={styles.paginationDock}>
+        <a href="#music" className="nav-dot" title="Music Anchor" />
+        <a href="#about" className="nav-dot" title="About Anchor" />
+        <a href="#gallery" className="nav-dot" title="Gallery Anchor" />
+        <a href="#epk" className="nav-dot" title="EPK Anchor" />
+        <a href="#contact" className="nav-dot" title="Contact Anchor" />
+        <a href="#footer" className="nav-dot" title="Conclusion" />
+      </div>
+
       {/* Main Sections Stream */}
       <main style={styles.mainContent}>
         
-        {/* 1. Music Anchor Zone */}
-        <section id="music">
+        {/* Each component sits in its own strict 100vh layout snap-lane */}
+        <div style={styles.snapSection} id="music">
           <Hero />
-        </section>
+        </div>
 
-        {/* 2. About Anchor Zone */}
-        <section id="about">
+        <div style={styles.snapSection} id="about">
           <Bio />
-        </section>
+        </div>
 
-        {/* 3. Gallery Anchor Zone */}
-        <section id="gallery">
+        <div style={styles.snapSection} id="gallery">
           <Gallery />
-        </section>
+        </div>
 
-        {/* 4. EPK Anchor Zone */}
-        <section id="epk">
+        <div style={styles.snapSection} id="epk">
           <EPK />
-        </section>
+        </div>
 
-        {/* 5. Contact Anchor Zone */}
-        <section id="contact">
+        <div style={styles.snapSection} id="contact">
           <Contact />
-        </section>
+        </div>
+        
+        <div style={styles.snapSection} id="footer">
+          <Footer />
+        </div>
         
       </main>
-
-      {/* Footer System */}
-      <footer style={styles.footer}>
-        <p>© 2026 Rusted Strings. All rights reserved.</p>
-      </footer>
     </div>
   );
 }
@@ -58,20 +98,34 @@ const styles = {
   appContainer: {
     backgroundColor: '#000000',
     color: '#ffffff',
-    minHeight: '100vh',
+    height: '100vh',                // Imperative to lock viewport framing height
     display: 'flex',
     flexDirection: 'column',
-    overflowX: 'hidden', // Keeps the layout stable and cuts out horizontal viewport wiggle
+    overflowY: 'scroll',            // Enables continuous vertical scroll tracks
+    overflowX: 'hidden',            // Cuts out horizontal viewport wiggle entirely
+    scrollSnapType: 'y mandatory',  // Enforces structural slide matching on scroll release
+    scrollBehavior: 'smooth',       // Silky gliding transitions on header links click
+    // Ambient low-contrast texture shift backdrop
+    background: 'linear-gradient(180deg, #000000 0%, #050505 50%, #000000 100%)',
   },
   mainContent: {
     flex: 1,
+    width: '100%',
   },
-  footer: {
-    textAlign: 'center',
-    padding: '40px',
-    color: '#555',
-    fontSize: '0.9rem',
-    borderTop: '1px solid #111',
-    backgroundColor: '#050505',
+  snapSection: {
+    scrollSnapAlign: 'start',       // Instructs browser where to catch snap bounds
+    height: '100vh',
+    width: '100vw',
+    position: 'relative'
+  },
+  paginationDock: {
+    position: 'fixed',
+    right: '35px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '18px',
+    zIndex: 99,                     // Floats beautifully underneath navigation but over view content panels
   }
 };
